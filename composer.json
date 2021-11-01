@@ -1,0 +1,14 @@
+{
+  "name": "app/harmonious",
+  "require": {
+    "ext-pdo": "*",
+    "vlucas/phpdotenv": "^2.4",
+    "ext-json": "*",
+    "klein/klein": "^2.1",
+    "firebase/php-jwt": "^5.2",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "nodemon": "^2.0.13"
+  }
+}

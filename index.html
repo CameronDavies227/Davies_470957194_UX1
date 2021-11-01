@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/css/uikit.min.css" />
+    <link href="style.css" rel="stylesheet">
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit-icons.min.js"></script>
+    <script src="js.js" defer></script>
+
+    </head>
+    <body class="uk-dark">
+        
+        <div id="L">
+
+            <legend>Authentication</legend>
+            <form method="post" 
+                action="../api/login"
+                onsubmit="login(event)">
+                <input type="text"
+                    placeholder="User Name"
+                    name="username"
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                <input type="password"
+                    placeholder="Password"
+                    name="password"
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                <input type="submit"
+                    name="submit"
+                    value="login">
+            </form>
+            <form method="put" 
+                action="../api/register"
+                onsubmit="register(event)">
+                <input type="text"
+                    placeholder="User Name"
+                    oninput="userExists(event)"
+                    name="username"
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                <input type="email"
+                    placeholder="E-Mail"
+                    oninput="emailExists(event)"
+                    name="email"
+                    required pattern="[a-z0-9._%+-]{3,}@[a-z]{3,}([.]{1}[a-z]{2,}|[.]{1}[a-z]{2,}[.]{1}[a-z]{2,}">       
+                <input type="password"
+                    placeholder="Password"
+                    name="password"
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                <input type="submit"
+                    name="submit"
+                    value="register">
+            </form>
+            <form method="get" 
+                action="../api/isloggedin"
+                onsubmit="userloggedin(event)">
+                <input type="submit"
+                    name="submit"
+                    value="isloggedin">
+            </form>
+            <!--<form action="controller/checkCredentials.php" method="POST">
+                <br>
+                Username:<br>
+                <input type="text" name="username" required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}"><br><br>
+                Password:<br>
+                <input type="password" name="password" required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}"><br><br>
+                <input type="submit" value="Sign In"><br><br>
+            </form>-->
+        </div>
+
+        <div id="G">
+
+            <ul class="uk-subnav uk-subnav-pill uk-flex-column uk-width-1-10" name="schedule selector" uk-switcher>
+                <li><a href="#">Astronomey Club</a></li>
+                <li><a href="#">Family</a></li>
+                <li><a href="#">IT Department</a></li>
+                <a href="#new-group" uk-toggle>+ Add New Group</a>
+            </ul>
+
+            <div id="new-group" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+                    <h2 class="uk-modal-title">Add New Group</h2>
+                    <form>
+                        <fieldset class="uk-fieldset">
+                        
+                            <legend class="uk-legend">New Group</legend>
+                        
+                            <div class="uk-margin">
+                                <input class="uk-input" type="text" placeholder="Group Name">
+                            </div>
+                        
+                            <div class="uk-margin">
+                                <textarea class="uk-textarea" rows="5" placeholder="Description"></textarea>
+                            </div>
+                        
+                            <li class="uk-button uk-button-default">Submit</li>
+                        
+                        </fieldset>
+                    </form>  
+                </div>
+            </div>
+
+            <ul class="uk-switcher uk-margin">
+                <div>
+                    <div class="uk-overflow-container">
+                        <table class="uk-table" name="calender">
+                            <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Astronomey Club:</caption>
+
+                            <thead>
+                                <tr>
+                                    <th>Time:</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednseday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                    <th>Sunday</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Morning:</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Afternoon:</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Everyone Booked</td>
+                                    <td>Andrew, Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                    <td>Andrew, Chloe, and Phil Free</td>
+                                </tr>
+                                <tr>
+                                    <td>Evening:</td>
+                                    <td>Andrew, Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                    <td>Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                    <td>Andrew Free</td>
+                                    <td>Andrew, and Chloe Free</td>
+                                    <td>Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                    <td>Andrew, Chloe, and Phil Free</td>
+                                    <td>Andrew, and You <a href="#Event-usage" uk-toggle>Suggest Event</a></td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Relavent:</caption>
+                        <label><input class="uk-checkbox" type="checkbox">Astronomey Club</label>
+                        <label><input class="uk-checkbox" type="checkbox">Family</label>
+                        <label><input class="uk-checkbox" type="checkbox">IT Department</label>
+                        &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                    </div>
+                </div>
+
+                <div>
+                    <table class="uk-table" name="calender">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Family:</caption>
+                        <thead>
+                            <tr>
+                                <th>Time:</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednseday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning:</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon:</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Andrew, Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew, Chloe, and Phil Free</td>
+                            </tr>
+                            <tr>
+                                <td>Evening:</td>
+                                <td>Andrew, Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew Free</td>
+                                <td>Andrew, and Chloe Free</td>
+                                <td>Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew, Chloe, and Phil Free</td>
+                                <td>Andrew, and You <a href="#Event-usage" uk-toggle>Suggest Event</a></td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Relavent:</caption>
+                        <label><input class="uk-checkbox" type="checkbox">Astronomey Club</label>
+                        <label><input class="uk-checkbox" type="checkbox">Family</label>
+                        <label><input class="uk-checkbox" type="checkbox">IT Department</label>
+                        &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                    </div>
+                </div>
+
+                <div>
+                    <table class="uk-table" name="calender">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT Department:</caption>
+                        <thead>
+                            <tr>
+                                <th>Time:</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednseday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning:</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon:</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Everyone Booked</td>
+                                <td>Andrew, Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew, Chloe, and Phil Free</td>
+                            </tr>
+                            <tr>
+                                <td>Evening:</td>
+                                <td>Andrew, Chloe, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Chloe, Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew Free</td>
+                                <td>Andrew, and Chloe Free</td>
+                                <td>Phil, and You Free <a href="#Event-usage" uk-toggle>Suggest Event</a></td>
+                                <td>Andrew, Chloe, and Phil Free</td>
+                                <td>Andrew, and You <a href="#Event-usage" uk-toggle>Suggest Event</a></td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Relavent:</caption>
+                        <label><input class="uk-checkbox" type="checkbox">Astronomey Club</label>
+                        <label><input class="uk-checkbox" type="checkbox">Family</label>
+                        <label><input class="uk-checkbox" type="checkbox">IT Department</label>
+                        &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                    </div>
+                </div>
+            </ul>
+
+            <div id="Event-usage" uk-modal name="Event Planner">
+                <div class="uk-modal-dialog uk-modal-body">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+                    <h2 class="uk-modal-title">New Event</h2>
+                    <form>
+                        <fieldset class="uk-fieldset">
+                        
+                            <legend class="uk-legend">New Event</legend>
+
+                        
+                            <div class="uk-margin" id="search">
+                                <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                                    <label><input class="uk-radio" type="radio" name="radio2"> Meal</label>
+                                    <label><input class="uk-radio" type="radio" name="radio2"> Activity</label>
+                                    <label><input class="uk-radio" type="radio" name="radio2"> Observaty</label>
+                                    <label><input class="uk-radio" type="radio" name="radio2"> Sizzlers</label>
+                                </div>
+                                <li class="uk-button uk-button-default">Submit</li>
+                            </div>
+
+                        </fieldset>
+                    </form> 
+                </div>
+            </div>
+
+
+            <nav class="uk-navbar-container" name="page selector" uk-navbar>
+                <ul class="uk-child-width-expand" uk-tab>
+                    <li class="uk-button uk-button-default" disabled>Groups</li>
+                    <li class="uk-button uk-button-default" onclick="change_Page('MS')">My Schedules</li>
+                </ul>
+            </nav>
+        </div>
+
+        <div id="MS">
+
+            <ul class="uk-subnav uk-subnav-pill uk-flex-column uk-width-1-10" name="group selector" uk-switcher>
+                <li><a href="#">Overall</a></li>
+                <li><a href="#">Work</a></li>
+                <li><a href="#">Chores</a></li>
+                <li><a href="#">Bookings</a></li>
+                <a href="#New-Schedule-usage" uk-toggle>+ Add New Schedule</a>
+            </ul>
+
+            <div id="New-Schedule-usage" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body">
+                    <button class="uk-modal-close-default" type="button" uk-close></button>
+                    <h2 class="uk-modal-title">Add New Group</h2>
+                    <form>
+                        <fieldset class="uk-fieldset">
+                        
+                            <legend class="uk-legend">New Schedule</legend>
+                        
+                            <div class="uk-margin">
+                                <input class="uk-input" type="text" placeholder="Schedule Name">
+                            </div>
+                        
+                            <div class="uk-margin">
+                                <select class="uk-select">
+                                    <option>Do not Display</option>
+                                    <option>Display if Relavent</option>
+                                    <option>Always Display</option>
+                                </select>
+                            </div>
+
+                            <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                                <caption>Relavent:</caption>
+                                <label><input class="uk-checkbox" type="checkbox">Astronomey Club</label>
+                                <label><input class="uk-checkbox" type="checkbox">Family</label>
+                                <label><input class="uk-checkbox" type="checkbox">IT Department</label>
+                            </div>
+                        
+                            <div class="uk-margin">
+                                <textarea class="uk-textarea" rows="5" placeholder="Description"></textarea>
+                            </div>
+                        
+                            <li class="uk-button uk-button-default">Submit</li>
+                        
+                        </fieldset>
+                    </form> 
+                </div>
+            </div>
+
+            <ul class="uk-switcher uk-margin">
+                <table class="uk-table" name="calender">
+                    <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Overall:</caption>
+                    <thead>
+                        <tr>
+                            <th>Time:</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednseday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                            <th>Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Morning:</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Clean House</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td>Afternoon:</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Work</td>
+                            <td>Free</td>
+                            <td>Prepare Meals</td>
+                        </tr>
+                        <tr>
+                            <td>Evening:</td>
+                            <td>Free</td>
+                            <td>Free</td>
+                            <td>Shop</td>
+                            <td>Doctor's Appointment</td>
+                            <td>Free</td>
+                            <td>Shop</td>
+                            <td>Free</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <div>
+                    <table class="uk-table" name="calender">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work:</caption>
+                        <thead>
+                            <tr>
+                                <th>Time:</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednseday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning:</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon:</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Work</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                            <tr>
+                                <td>Evening:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="uk-margin" id="search">
+                        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                            <label><input class="uk-radio" type="radio" name="radio2"> Do not Display</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Display if Relavent</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Always Display</label>
+                            &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <table class="uk-table" name="calender">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chores:</caption>
+                        <thead>
+                            <tr>
+                                <th>Time:</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednseday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Clean House</td>
+                                <td>Free</td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Prepare Meals</td>
+                            </tr>
+                            <tr>
+                                <td>Evening:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Shop</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Shop</td>
+                                <td>Free</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="uk-margin" id="search">
+                        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                            <label><input class="uk-radio" type="radio" name="radio2"> Do not Display</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Display if Relavent</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Always Display</label>
+                            &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <table class="uk-table" name="calender">
+                        <caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bookings:</caption>
+                        <thead>
+                            <tr>
+                                <th>Time:</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednseday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                                <th>Sunday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                            <tr>
+                                <td>Afternoon:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                            <tr>
+                                <td>Evening:</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Doctor's Appointment</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                                <td>Free</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="uk-margin" id="search">
+                        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                            <label><input class="uk-radio" type="radio" name="radio2"> Do not Display</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Display if Relavent</label>
+                            <label><input class="uk-radio" type="radio" name="radio2"> Always Display</label>
+                            &nbsp;&nbsp;<li class="uk-button uk-button-default">Apply</li>
+                        </div>
+                    </div>
+                </div>
+            </ul>
+
+            <nav class="uk-navbar-container" name="page selector" uk-navbar>
+                <ul class="uk-child-width-expand" uk-tab>
+                    <li class="uk-button uk-button-default" onclick="change_Page('G')">Groups</li>
+                    <li class="uk-button uk-button-default" disabled>My Schedules</li>
+                </ul>
+            </nav>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,36 @@
+body{
+    background-color: lightgrey;
+    height: 100%;
+}
+
+.uk-subnav {
+    align-content: flex-start;
+    padding-left: 5em;
+    align-items: flex-start;
+}
+
+.uk-navbar-container{
+    width: 100%;
+}
+
+.uk-child-width-expand{
+    width: 100%;
+}
+
+.uk-active{
+    width: 100%;
+    font: 1em sans-serif;
+}
+
+.uk-table{
+    overflow: auto;
+}
+
+.uk-switcher{
+    background-color: lightskyblue;
+}
+
+.uk-button{
+    width: 50%;
+    margin: 0 auto;
+  }
