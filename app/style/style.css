@@ -3,6 +3,12 @@ body{
     height: 100%;
 }
 
+.uk-navbar-right{
+    background-color: white;
+    height: 4em;
+    align-content: flex-end;
+}
+
 .uk-subnav {
     align-content: flex-start;
     padding-left: 5em;

@@ -3,42 +3,54 @@
     <head>
     <!-- UIkit CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/css/uikit.min.css" />
-    <link href="style.css" rel="stylesheet">
+    <link href="style/style.css" rel="stylesheet">
 
     <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit-icons.min.js"></script>
-    <script src="js.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.7.2/dist/js/uikit-icons.min.js" defer></script>
+    <script src="interactivitey/js.js" defer></script>
 
     </head>
-    <body class="uk-dark">
+    <body class="uk-dark" id="page">
         
         <div id="L">
 
+            <div class="uk-navbar-right">
+                <button class="uk-button uk-button-default" onclick="change_Style()">Theme</button>
+                <form method="post" 
+                action="/api/logout"
+                onsubmit="logout(event)">
+                <input class="uk-input" type="submit"
+                    name="submit"
+                    value="logout">
+                </form>
+            </div>
+
             <legend>Authentication</legend>
             <form method="post" 
-                action="../api/login"
+                action="/api/login"
                 onsubmit="login(event)">
                 <input type="text"
                     placeholder="User Name"
                     name="username"
-                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">
                 <input type="password"
                     placeholder="Password"
                     name="password"
-                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">
                 <input type="submit"
                     name="submit"
                     value="login">
             </form>
+
             <form method="put" 
-                action="../api/register"
+                action="/api/register"
                 onsubmit="register(event)">
                 <input type="text"
                     placeholder="User Name"
                     oninput="userExists(event)"
                     name="username"
-                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">
                 <input type="email"
                     placeholder="E-Mail"
                     oninput="emailExists(event)"
@@ -47,18 +59,19 @@
                 <input type="password"
                     placeholder="Password"
                     name="password"
-                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">>
+                    required pattern="[0-9a-zA-Z-!@#$%^&*()?]{3,}">
                 <input type="submit"
                     name="submit"
                     value="register">
             </form>
-            <form method="get" 
-                action="../api/isloggedin"
+
+            <!--<form method="get" 
+                action="/api/isloggedin"
                 onsubmit="userloggedin(event)">
                 <input type="submit"
                     name="submit"
                     value="isloggedin">
-            </form>
+            </form>-->
             <!--<form action="controller/checkCredentials.php" method="POST">
                 <br>
                 Username:<br>
@@ -70,6 +83,18 @@
         </div>
 
         <div id="G">
+
+            <div class="uk-navbar-right">
+                <button class="uk-button uk-button-default" onclick="change_Style()">Button</button>
+                
+                <form method="post" 
+                action="/api/logout"
+                onsubmit="logout(event)">
+                <input class="uk-input" type="submit"
+                    name="submit"
+                    value="logout">
+                </form>
+            </div>
 
             <ul class="uk-subnav uk-subnav-pill uk-flex-column uk-width-1-10" name="schedule selector" uk-switcher>
                 <li><a href="#">Astronomey Club</a></li>
@@ -282,7 +307,7 @@
                 <div class="uk-modal-dialog uk-modal-body">
                     <button class="uk-modal-close-default" type="button" uk-close></button>
                     <h2 class="uk-modal-title">New Event</h2>
-                    <form>
+                    <form method="post" action="/api/addevent">
                         <fieldset class="uk-fieldset">
                         
                             <legend class="uk-legend">New Event</legend>
@@ -313,6 +338,18 @@
         </div>
 
         <div id="MS">
+
+            <div class="uk-navbar-right">
+                <button class="uk-button uk-button-default" onclick="change_Style()">Button</button>
+                
+                <form method="post" 
+                action="/api/logout"
+                onsubmit="logout(event)">
+                <input class="uk-input" type="submit"
+                    name="submit"
+                    value="logout">
+                </form>
+            </div>
 
             <ul class="uk-subnav uk-subnav-pill uk-flex-column uk-width-1-10" name="group selector" uk-switcher>
                 <li><a href="#">Overall</a></li>

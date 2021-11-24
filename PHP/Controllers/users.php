@@ -1,240 +1,129 @@
 <?php
+class users{
+    Private $username;
+    Private $firstname;
+    Private $lastname;
+    Private $password;
+    Private $role;    
 
-
-namespace Controllers;
-
-use PDO;
-use PDOException;
-use Services\Validation;
-
-/**
- * Class UserController
- * @package Repository
- */
-class UserController
-{
-    private PDO $pdo;
-    private $requestMethod;
-    private ?int $userID;
-
-    /**
-     * UserController constructor.
-     * When this class object is instantiated it creates a new Database
-     * And initializes the return PDO object to the local $pdo variable
-     * @param PDO $pdo
-     * @param mixed $requestMethod
-     * @param ?int $userID
-     */
-    public function __construct(PDO $pdo, $requestMethod, ?int $userID)
-    {
-        $this->requestMethod = $requestMethod;
-        $this->userID = $userID;
-        $this->pdo = $pdo;
+    public function get_information( $username, $firstname, $lastname, $password, $role){
+        $this->username=$username;	
+        $this->firstname=$firstname;
+        $this->lastname=$lastname;
+        $this->password=$password;
+        $this->role=$role;
     }
 
-    /**
-     * Processes the request type
-     * then executes the applicable function
-     */
-    public function processRequest()
-    {
-        switch ($this->requestMethod) {
-            case 'GET':
-                if ($this->userID) {
-                    $response = $this->fetchSingleUser($this->userID);
-                } else {
-                    $response = $this->fetchAllUsers();
+    public function insert_user($pdo){
+        #set up query for checking how many usernames match new username
+        $query1="Select count(*) from users where username=:un";
+        $stmt1=$pdo->prepare($query1);
+        #define new username
+        $stmt1->bindParam(":un", $this->username);
+        #run query
+        $stmt1->execute();
+        #check if any match new username in database if not insert new user
+        $ct = $stmt1->fetchColumn();
+        if($ct == 0){
+            #this hashes the password before it is intalled
+            $hashed_password=password_hash($this->password,PASSWORD_DEFAULT);
+            #setting up the query
+            $query = "INSERT INTO users(`username`,`firstname`, `lastname`,`password`,`role`) VALUES(:un,:fn,:ln,:p,:r)";
+            $stmt=$pdo->prepare($query);
+            #defining elements for the query
+            $stmt->bindParam(":un", $this->username);
+            $stmt->bindParam(":fn", $this->firstname);
+            $stmt->bindParam(":ln", $this->lastname);
+            $stmt->bindParam(":p", $hashed_password);
+            $stmt->bindParam(":r", $this->role);
+            #running the query
+            $stmt->execute();
+            return("Saved");
+        } else{
+            return("Not Saved");
+        }
+    } 
+
+    public function update_user($pdo){
+        #set up query for updating the user
+        $query = "UPDATE users SET firstname=:fn,lastname=:ln,password=:p,role=:r where username=:un";
+        $stmt=$pdo->prepare($query);
+        #defining elements for the query
+        $stmt->bindParam(":un", $this->username);
+        $stmt->bindParam(":fn", $this->firstname);
+        $stmt->bindParam(":ln", $this->lastname);
+        $stmt->bindParam(":p", $this->password);
+        $stmt->bindParam(":r", $this->role);
+        #running the query
+        $stmt->execute();
+    }
+
+    public function get_usernames($pdo){
+        $query="SELECT * FROM users";
+        $stmt=$pdo->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row;
+    }
+
+    public function search_user_by_username($pdo, $username){
+        $query = "SELECT * FROM users WHERE username=?";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute(array($username));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row;
+    }
+
+    public function display_all_users($pdo){
+        $query = "SELECT * FROM users";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+        $records = array();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $records[] = $row;
+        }
+    return $records;
+    }
+
+    public function delete_user($pdo, $username){
+        #set up query for deleting the user
+        $query = "Delete FROM users where username=?";
+        $stmt = $pdo->prepare($query);
+        #running the query
+        $stmt->execute(array($username));
+    }
+
+    public function loginCheck($pdo,$username,$password){
+        // Check if session variable is set
+        if (isset($_SESSION['username'])) {
+            header('Location:../view/displaybook.php');
+        } else {
+            // Not logged in check credentials- empty and if not empty - are correct and if correct store username in a session variable
+            if (empty($username) || empty($password)) {
+                header('Location:../index.php?msg=Empty credentials');
+                exit();
+            }else{
+                $query = "SELECT * FROM users WHERE username = :un";
+                $stmt = $pdo->prepare($query);
+                $stmt->bindParam(":un", $username);
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $stored_hashed_password = $row['password'];
+                //check if credentials match
+                if(password_verify($password, $stored_hashed_password)) {
+                    //if credentials match, then create a session variable to store the infromation
+                    session_start();
+                	$_SESSION['username'] = $row['username'];
+                    $_SESSION['role'] = $row['role'];
+                	header('Location:../view/displaybook.php');
+                	exit();
+                }else {
+                    header('Location: ../index.php?msg=Credentials do not match');
+                    exit();
                 }
-                break;
-            case 'POST':
-                $response = $this->addNewUser();
-                break;
-            case 'PUT':
-                $response = $this->updateUserDetails($this->userID);
-                break;
-            case 'DELETE':
-                $response = $this->deleteUserById($this->userID);
-                break;
-            default:
-                $response = (new Validation())->notFoundResponse();
-                break;
+            }
         }
-        header($response['status_code_header']);
-        if ($response['body']) {
-            echo $response['body'];
-        }
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     * Checks to make sure that the requested user data exists
-     *
-     */
-    public function find($id)
-    {
-        $query = "
-      SELECT
-        userID, username, email, phone(optional), password(hashed)
-      FROM
-        app.users
-      WHERE userID = :id;
-    ";
-
-        try {
-            $statement = $this->pdo->prepare($query);
-            $statement->execute(array('id' => $id));
-            return $statement->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-    }
-
-    /**
-     * Fetches all users
-     * @return array|false|string
-     */
-    public function fetchAllUsers()
-    {
-        try {
-            $sql = "SELECT * FROM sports.users";
-            $stmt = $this->pdo->query($sql);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode($result);
-        return $response;
-    }
-
-    /**
-     * Creates a new user
-     *
-     * @return array
-     */
-    public function addNewUser(): array
-    {
-        $validate = new Validation();
-        $input = (array)json_decode(file_get_contents('php://input'), TRUE);
-        if ($validate->validatePost($input)) {
-            return $validate->unprocessableEntityResponse();
-        }
-
-        $sql = "INSERT INTO app.users (username, email, phone(optional), password(hashed))
-                     VALUES (:username, :email, :phone(optional), :password(hashed)";
-
-        $username = $validate->inputValidation($input['username']);
-        $email = $validate->inputValidation($input['email']);
-        $phone = $validate->inputValidation($input['phone(optional)']);
-        $password = $validate->inputValidation($input['password(hashed)']);
-
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':username', $username);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':phone(optional)', $phone);
-            $stmt->bindParam(':password(hashed)', $password);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-
-        $response['status_code_header'] = 'HTTP/1.1 201 Created';
-        $response['body'] = json_encode(['message' => 'User Created']);
-        return $response;
-    }
-
-    /**
-     * Fetches a user by int $userID
-     *
-     * @param $userID
-     * @return array
-     */
-    public function fetchSingleUser($userID): array
-    {
-        try {
-            $sql = "SELECT * FROM app.users WHERE userID = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':id', $userID);
-            $stmt->execute();
-            $data = $stmt->fetch();
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        } catch (PDOException $e) {
-            throw new PDOException($e->getMessage());
-        }
-    }
-
-    /**
-     * @param $userID
-     * @return array
-     */
-    public function updateUserDetails($userID): array
-    {
-        $validate = new Validation();
-        $result = $this->find($userID);
-
-        if(! $result) {
-            return $validate->notFoundResponse();
-        }
-
-        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-
-        if(! $validate->validatePost($input)) {
-            return $validate->unprocessableEntityResponse();
-        }
-        $username = $validate->inputValidation($input['username']);
-        $email = $validate->inputValidation($input['email']);
-        $phone = $validate->inputValidation($input['phone(optional)']);
-        $password = $validate->inputValidation($input['password(hashed)']);
-
-        try {
-            $sql = 'UPDATE app.users
-                     SET username= :username,
-                         password(hashed) = :password(hashed),
-                         phone(optional)= :phone(optional),
-                         email= :email
-                     WHERE userID';
-
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':firstName', $firstName);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':phone(optional)', $phone);
-            $stmt->bindParam(':password(hashed)	', $password);
-            $stmt->execute();
-
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode(['message' => 'User Updated!']);
-        return $response;
-    }
-
-    /**
-     * @param $userID
-     * @return array
-     */
-    public function deleteUserById($userID): array
-    {
-        $result = $this->find($userID);
-        if(! $result) {
-            (new Validation())->notFoundResponse();
-        }
-        try {
-            $sql = 'DELETE FROM app.users WHERE userID = :userID';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':userID', $userID);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            exit($e->getMessage());
-        }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode(['message' => 'User Deleted!']);
-        return $response;
     }
 
 }
+?>
